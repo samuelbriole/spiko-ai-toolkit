@@ -1,5 +1,5 @@
 import { camelize } from "@effect/openapi-generator/Utils"
-import type { OpenAPISpec } from "effect/unstable/httpapi/OpenApi"
+import type { OpenAPISpec } from "effect/http-api/OpenApi"
 import { describe, expect, it } from "vitest"
 import { generateCliFiles, type CliSourceDocument } from "../../../tools/generate-cli.ts"
 
@@ -34,7 +34,7 @@ const syntheticDocuments = (
   publicOverrides: ReadonlyArray<SyntheticOverride>,
 ): ReadonlyArray<CliSourceDocument> => {
   const publicOperationIds = Array.from(
-    { length: 15 },
+    { length: 16 },
     (_, index) =>
       publicOverrides.find((candidate) => candidate.index === index)?.operationId ??
       `Test Op ${index}`,
@@ -42,21 +42,21 @@ const syntheticDocuments = (
   return [
     {
       clientMethods: new Set(publicOperationIds.map(camelize)),
-      document: syntheticDocument(15, publicOverrides),
+      document: syntheticDocument(16, publicOverrides),
       family: "public",
     },
     {
       clientMethods: new Set(
-        Array.from({ length: 35 }, (_, index) => camelize(`Test Op ${index}`)),
+        Array.from({ length: 27 }, (_, index) => camelize(`Test Op ${index}`)),
       ),
-      document: syntheticDocument(35),
+      document: syntheticDocument(27),
       family: "investor",
     },
     {
       clientMethods: new Set(
-        Array.from({ length: 65 }, (_, index) => camelize(`Test Op ${index}`)),
+        Array.from({ length: 72 }, (_, index) => camelize(`Test Op ${index}`)),
       ),
-      document: syntheticDocument(65),
+      document: syntheticDocument(72),
       family: "distributor",
     },
   ]
@@ -70,8 +70,8 @@ describe("generated CLI source invariants", () => {
       "apps/cli/src/generated/investor.ts",
       "apps/cli/src/generated/distributor.ts",
     ])
-    expect(files[0]?.content.match(/^export const /gm)).toHaveLength(16)
-    expect(files[0]?.content.match(/defineOperation\(/gm)).toHaveLength(15)
+    expect(files[0]?.content.match(/^export const /gm)).toHaveLength(17)
+    expect(files[0]?.content.match(/defineOperation\(/gm)).toHaveLength(16)
     expect(files[0]?.content).toContain("export const PublicOperations = [")
   })
 

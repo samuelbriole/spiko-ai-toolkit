@@ -1,6 +1,6 @@
 import { PublicApi, type PublicApiClient } from "@spiko/public-api-client"
 import { Effect, Schema } from "effect"
-import { Tool, Toolkit } from "effect/unstable/ai"
+import { Tool, Toolkit } from "effect/ai"
 
 const Day = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}$/)).annotate({
   description: "A calendar day in YYYY-MM-DD format",

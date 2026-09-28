@@ -5,9 +5,9 @@ import * as NodeHttpClient from "@effect/platform-node/NodeHttpClient"
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime"
 import * as NodeServices from "@effect/platform-node/NodeServices"
 import { Cause, Console, Effect, FileSystem, Schema } from "effect"
-import { Command, Flag } from "effect/unstable/cli"
-import * as HttpClient from "effect/unstable/http/HttpClient"
-import type { OpenAPISpec } from "effect/unstable/httpapi/OpenApi"
+import { Command, Flag } from "effect/cli"
+import * as HttpClient from "effect/http/HttpClient"
+import type { OpenAPISpec } from "effect/http-api/OpenApi"
 import { fixGeneratedClient } from "./fix-generated-client.ts"
 import { generateCliFiles } from "./generate-cli.ts"
 import { findUnsupportedSuccessMediaTypes } from "./validate-openapi.ts"
@@ -67,7 +67,7 @@ const readSpec = (definition: ApiDefinition, fetch: boolean) =>
     return normalized
   })
 
-const fetch = Flag.boolean("fetch").pipe(
+const fetch = Flag.Boolean("fetch").pipe(
   Flag.withDescription("Download the latest Spiko specifications before generating clients"),
   Flag.withDefault(false),
 )

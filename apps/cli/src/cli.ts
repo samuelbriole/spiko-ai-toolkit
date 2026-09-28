@@ -1,5 +1,5 @@
 import { Cause, Console, Effect, FileSystem, Layer, Path, Schema, Stdio } from "effect"
-import { Argument, CliError, Command, Prompt } from "effect/unstable/cli"
+import { Argument, CliError, Command, Prompt } from "effect/cli"
 
 export const SpikoFamilies = ["public", "investor", "distributor"] as const
 
@@ -289,7 +289,7 @@ const listItem = (definition: OperationDefinition) => ({
 })
 
 const makeOperationsCommand = (definitions: ReadonlyArray<OperationDefinition>) => {
-  const family = Argument.choice("family", SpikoFamilies).pipe(
+  const family = Argument.Literals("family", SpikoFamilies).pipe(
     Argument.withDescription("The Spiko Operation family to inspect"),
   )
 
@@ -300,7 +300,7 @@ const makeOperationsCommand = (definitions: ReadonlyArray<OperationDefinition>) 
     ),
   ).pipe(Command.withDescription("List generated Spiko Operations"))
 
-  const operationId = Argument.string("operation-id").pipe(
+  const operationId = Argument.String("operation-id").pipe(
     Argument.withDescription("The exact OpenAPI operationId to describe"),
   )
   const describe = Command.make("describe", { family, operationId }, ({ family, operationId }) => {
@@ -587,7 +587,7 @@ export const makeCli = <
                 const wizardArgs = yield* Command.wizard(rootCommand)
                 yield* Console.log(`Command: ${wizardArgs.join(" ")}`)
                 const shouldRun = yield* Prompt.run(
-                  Prompt.toggle({
+                  Prompt.Toggle({
                     active: "yes",
                     inactive: "no",
                     initial: true,

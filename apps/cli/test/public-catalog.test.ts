@@ -41,15 +41,15 @@ const PublicUnusedLayer = Layer.effect(
 
 describe("generated Public Operation Catalog", () => {
   it("contains every unique Public Operation with self-contained schemas and routes", () => {
-    expect(PublicOperations).toHaveLength(15)
-    expect(new Set(PublicOperations.map(({ definition }) => definition.operationId)).size).toBe(15)
+    expect(PublicOperations).toHaveLength(16)
+    expect(new Set(PublicOperations.map(({ definition }) => definition.operationId)).size).toBe(16)
     expect(
       new Set(
         PublicOperations.map(
           ({ definition }) => `${definition.family}/${definition.resource}/${definition.action}`,
         ),
       ).size,
-    ).toBe(15)
+    ).toBe(16)
 
     for (const { definition } of PublicOperations) {
       expect(JSON.stringify(definition)).not.toContain("#/components/schemas/")

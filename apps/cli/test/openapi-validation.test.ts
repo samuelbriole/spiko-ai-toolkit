@@ -1,4 +1,4 @@
-import type { OpenAPISpec } from "effect/unstable/httpapi/OpenApi"
+import type { OpenAPISpec } from "effect/http-api/OpenApi"
 import { describe, expect, it } from "vitest"
 import { findUnsupportedSuccessMediaTypes } from "../../../tools/validate-openapi.ts"
 

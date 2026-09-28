@@ -4,8 +4,8 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { Console, Effect, Layer, Option, Queue, Redacted, Terminal } from "effect"
-import * as HttpClient from "effect/unstable/http/HttpClient"
-import * as HttpClientResponse from "effect/unstable/http/HttpClientResponse"
+import * as HttpClient from "effect/http/HttpClient"
+import * as HttpClientResponse from "effect/http/HttpClientResponse"
 import { describe, expect, it } from "vitest"
 import { makeCli } from "../src/cli.ts"
 import { DistributorOperations } from "../src/generated/distributor.ts"
@@ -64,17 +64,17 @@ const shareClassId = "00000000-0000-4000-8000-000000000002"
 
 describe("generated Distributor Operation Catalog", () => {
   it("contains every unique Distributor Operation and route", () => {
-    expect(DistributorOperations).toHaveLength(65)
+    expect(DistributorOperations).toHaveLength(72)
     expect(
       new Set(DistributorOperations.map(({ definition }) => definition.operationId)).size,
-    ).toBe(65)
+    ).toBe(72)
     expect(
       new Set(
         DistributorOperations.map(
           ({ definition }) => `${definition.family}/${definition.resource}/${definition.action}`,
         ),
       ).size,
-    ).toBe(65)
+    ).toBe(72)
   })
 
   it("uploads typed multipart values and binary file content exactly once", async () => {

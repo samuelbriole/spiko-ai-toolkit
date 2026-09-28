@@ -200,7 +200,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -217,7 +217,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "description": "Get info about the authenticated investor",
@@ -421,7 +435,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -438,12 +452,25 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
-        "description": "Get info about all available investors",
-        "summary": "Get all investors' infos",
-        "deprecated": true
+        "description": "Get info about all the investors the connection was granted access to",
+        "summary": "Get all investors' infos"
       }
     },
     "/accounts/": {
@@ -745,7 +772,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -762,7 +789,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "409": {
             "description": "Conflict"
@@ -1117,7 +1158,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1134,7 +1175,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "description": "Get list of an investor's accounts",
@@ -1445,7 +1500,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1462,7 +1517,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -1695,7 +1764,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1712,10 +1781,34 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
+          },
+          "422": {
+            "description": "The account has no virtual IBAN in the requested currency to receive this deposit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoDepositAccountInCurrencyError"
+                }
+              }
+            }
           }
         },
         "description": "\n**Retrieve deposit instructions for a given account, share class, and subscription currency.**\n\nReturns a list of virtual bank accounts, each with its supported payment rails. An empty list means no virtual bank account has been provisioned (feature not available).\n\nEach entry includes payment informations and supported rails:\n- `SCT` / `SCT Instant` - SEPA Credit Transfer (EUR)\n- `Faster Payments` / `CHAPS` / `BACS` - UK local transfers (GBP); the `accountDetails` field then contains `sortCode` and `accountNumber`\n- `SWIFT` - international wire\n\nThe response also lists stablecoin deposit accounts under `stablecoinDepositAccounts`: one deposit address per supported network, provisioned on demand the first time instructions are requested. Each address accepts every stablecoin listed in its `stablecoins` field (independent of `subscriptionCurrency`); sending a supported stablecoin to it automatically creates and funds a subscription. An empty list means stablecoin deposits are not available for this account and share class (the feature requires an organization, or an individual with a tax identification number on file, on supported share classes).\n          ",
@@ -1795,7 +1888,12 @@
                           "description": "A valid BIC (Bank Identifier Code)"
                         },
                         "currency": {
-                          "$ref": "#/components/schemas/CurrencyCode"
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/CurrencyCode"
+                            }
+                          ],
+                          "description": "Currency the wire must be sent in. It is the currency of the destination account and of the order amount, which can differ from the share class currency."
                         }
                       },
                       "additionalProperties": false
@@ -1836,7 +1934,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1853,7 +1951,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -2043,7 +2155,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2060,7 +2172,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "description": "\nGet all deposit orders for a given investor with optional status filter.\n\n> ⚠️ **For displaying an account's activity, prefer the [account transaction history endpoint](#tag/Account-Transactions/operation/accountTransactions.getAccountTransactions).** It returns deposits, withdrawals, transfers and yield accruals as a single time-ordered stream, with cursor pagination, so you don't need to call multiple per-order-type endpoints and reconcile their results.\n",
@@ -2209,7 +2335,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2226,7 +2352,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -2381,7 +2521,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2398,7 +2538,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -2498,7 +2652,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2515,7 +2669,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -2560,768 +2728,6 @@
           },
           "required": true
         }
-      }
-    },
-    "/subscription-orders/": {
-      "post": {
-        "tags": [
-          "Subscription Orders (deprecated)"
-        ],
-        "operationId": "subscriptionOrders.createSubscriptionOrder",
-        "parameters": [],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "id",
-                    "investorId",
-                    "amount",
-                    "amountInShareClassCurrency",
-                    "sharesAmount",
-                    "accountId",
-                    "shareClassId",
-                    "wireReference",
-                    "createdAt",
-                    "executedAt",
-                    "canceledAt",
-                    "status",
-                    "shareClassAccountId",
-                    "custodialAccountId"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "investorId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "amount": {
-                      "$ref": "#/components/schemas/Amount"
-                    },
-                    "amountInShareClassCurrency": {
-                      "$ref": "#/components/schemas/Amount"
-                    },
-                    "sharesAmount": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/BigDecimal"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "accountId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "shareClassId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "wireReference": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "description": "a wire reference",
-                          "title": "WireReference",
-                          "pattern": "^[0-9A-Z]{5,15}$"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "createdAt": {
-                      "$ref": "#/components/schemas/Date"
-                    },
-                    "executedAt": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Date"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "canceledAt": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Date"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "pending",
-                        "executed",
-                        "canceled"
-                      ]
-                    },
-                    "shareClassAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    },
-                    "custodialAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/HttpApiDecodeError"
-                    },
-                    {
-                      "$ref": "#/components/schemas/ApplicationError"
-                    },
-                    {
-                      "$ref": "#/components/schemas/SubscriptionNotAllowedError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "NotFound"
-          }
-        },
-        "description": "**Deprecated - use deposit endpoints instead.** Create a new subscription order and return the order info. This subscription shall be paid via bank transfer.",
-        "summary": "Create a new subscription order",
-        "deprecated": true,
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "amount",
-                  "shareClassId",
-                  "accountId"
-                ],
-                "properties": {
-                  "amount": {
-                    "$ref": "#/components/schemas/NonNegativeAmount"
-                  },
-                  "shareClassId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  },
-                  "accountId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  }
-                },
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": true
-        }
-      },
-      "get": {
-        "tags": [
-          "Subscription Orders (deprecated)"
-        ],
-        "operationId": "subscriptionOrders.getSubscriptionOrders",
-        "parameters": [
-          {
-            "name": "investorId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "description": "a Universally Unique Identifier",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "a Universally Unique Identifier"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "executed",
-                "canceled"
-              ]
-            },
-            "required": false
-          }
-        ],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "investorId",
-                      "amount",
-                      "amountInShareClassCurrency",
-                      "sharesAmount",
-                      "accountId",
-                      "shareClassId",
-                      "wireReference",
-                      "createdAt",
-                      "executedAt",
-                      "canceledAt",
-                      "status",
-                      "shareClassAccountId",
-                      "custodialAccountId"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "investorId": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "amount": {
-                        "$ref": "#/components/schemas/Amount"
-                      },
-                      "amountInShareClassCurrency": {
-                        "$ref": "#/components/schemas/Amount"
-                      },
-                      "sharesAmount": {
-                        "anyOf": [
-                          {
-                            "$ref": "#/components/schemas/BigDecimal"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "accountId": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "shareClassId": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "wireReference": {
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "description": "a wire reference",
-                            "title": "WireReference",
-                            "pattern": "^[0-9A-Z]{5,15}$"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "createdAt": {
-                        "$ref": "#/components/schemas/Date"
-                      },
-                      "executedAt": {
-                        "anyOf": [
-                          {
-                            "$ref": "#/components/schemas/Date"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "canceledAt": {
-                        "anyOf": [
-                          {
-                            "$ref": "#/components/schemas/Date"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "status": {
-                        "type": "string",
-                        "enum": [
-                          "pending",
-                          "executed",
-                          "canceled"
-                        ]
-                      },
-                      "shareClassAccountId": {
-                        "type": "string",
-                        "title": "UUID",
-                        "description": "please now use pair `{accountId, shareClassId}` instead",
-                        "deprecated": true
-                      },
-                      "custodialAccountId": {
-                        "type": "string",
-                        "title": "UUID",
-                        "description": "please now use pair `{accountId, shareClassId}` instead",
-                        "deprecated": true
-                      }
-                    },
-                    "additionalProperties": false
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpApiDecodeError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "NotFound"
-          }
-        },
-        "description": "\n**Deprecated - use deposit endpoints instead.** Get all subscription orders for a given investor with optional status filter.\n\n> ⚠️ **For displaying an account's activity, prefer the [account transaction history endpoint](#tag/Account-Transactions/operation/accountTransactions.getAccountTransactions).** It returns deposits, withdrawals, transfers and yield accruals as a single time-ordered stream, with cursor pagination, so you don't need to call multiple per-order-type endpoints and reconcile their results.\n",
-        "summary": "Get list of an investor's subscription orders",
-        "deprecated": true
-      }
-    },
-    "/subscription-orders/direct-debit/": {
-      "post": {
-        "tags": [
-          "Subscription Orders (deprecated)"
-        ],
-        "operationId": "subscriptionOrders.createSubscriptionOrderByDirectDebit",
-        "parameters": [],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "investorId",
-                    "amount",
-                    "shareClassId",
-                    "accountId",
-                    "bankAccountId",
-                    "status",
-                    "createdAt",
-                    "scheduledDate"
-                  ],
-                  "properties": {
-                    "investorId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "amount": {
-                      "$ref": "#/components/schemas/NonNegativeAmount"
-                    },
-                    "shareClassId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "accountId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "bankAccountId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "pending",
-                        "scheduled",
-                        "confirmed",
-                        "returned",
-                        "canceled",
-                        "failed"
-                      ]
-                    },
-                    "createdAt": {
-                      "$ref": "#/components/schemas/Date"
-                    },
-                    "scheduledDate": {
-                      "$ref": "#/components/schemas/Date"
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpApiDecodeError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "NotFound"
-          }
-        },
-        "description": "**Deprecated - use deposit endpoints instead.** Create a new SEPA Direct Debit collection for an account. Only allowed for EUTBL and eurSAFO share classes, for professional investors for whom the feature has been enabled and who have signed a mandate on app.spiko.io.",
-        "summary": "Create a new subscription order via SEPA Direct Debit",
-        "deprecated": true,
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "amount",
-                  "shareClassId",
-                  "accountId",
-                  "bankAccountId"
-                ],
-                "properties": {
-                  "amount": {
-                    "$ref": "#/components/schemas/NonNegativeAmount"
-                  },
-                  "shareClassId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  },
-                  "accountId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  },
-                  "bankAccountId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  }
-                },
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": true
-        }
-      }
-    },
-    "/subscription-orders/{subscriptionOrderId}": {
-      "get": {
-        "tags": [
-          "Subscription Orders (deprecated)"
-        ],
-        "operationId": "subscriptionOrders.getSubscriptionOrder",
-        "parameters": [
-          {
-            "name": "subscriptionOrderId",
-            "in": "path",
-            "schema": {
-              "type": "string",
-              "description": "a Universally Unique Identifier",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "a Universally Unique Identifier"
-          }
-        ],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "id",
-                    "investorId",
-                    "amount",
-                    "amountInShareClassCurrency",
-                    "sharesAmount",
-                    "accountId",
-                    "shareClassId",
-                    "wireReference",
-                    "createdAt",
-                    "executedAt",
-                    "canceledAt",
-                    "status",
-                    "shareClassAccountId",
-                    "custodialAccountId"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "investorId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "amount": {
-                      "$ref": "#/components/schemas/Amount"
-                    },
-                    "amountInShareClassCurrency": {
-                      "$ref": "#/components/schemas/Amount"
-                    },
-                    "sharesAmount": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/BigDecimal"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "accountId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "shareClassId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "wireReference": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "description": "a wire reference",
-                          "title": "WireReference",
-                          "pattern": "^[0-9A-Z]{5,15}$"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "createdAt": {
-                      "$ref": "#/components/schemas/Date"
-                    },
-                    "executedAt": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Date"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "canceledAt": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Date"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "pending",
-                        "executed",
-                        "canceled"
-                      ]
-                    },
-                    "shareClassAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    },
-                    "custodialAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpApiDecodeError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "NotFound"
-          }
-        },
-        "description": "**Deprecated - use deposit endpoints instead.** Get info of a specific subscription order by its ID",
-        "summary": "Get subscription order",
-        "deprecated": true
       }
     },
     "/withdrawal-orders/": {
@@ -3563,7 +2969,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3580,7 +2986,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -4010,7 +3430,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4027,7 +3447,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "description": "\nGet all withdrawal orders for a given investor with optional status filter.\n\n> ⚠️ **For displaying an account's activity, prefer the [account transaction history endpoint](#tag/Account-Transactions/operation/accountTransactions.getAccountTransactions).** It returns deposits, withdrawals, transfers and yield accruals as a single time-ordered stream, with cursor pagination, so you don't need to call multiple per-order-type endpoints and reconcile their results.\n",
@@ -4282,7 +3716,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4299,7 +3733,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -4550,7 +3998,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4567,7 +4015,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -4575,1130 +4037,6 @@
         },
         "description": "Get info of a specific withdrawal order by its ID",
         "summary": "Get withdrawal order"
-      }
-    },
-    "/redemption-orders/": {
-      "post": {
-        "tags": [
-          "Redemption Orders (deprecated)"
-        ],
-        "operationId": "redemptionOrders.createRedemptionOrder",
-        "parameters": [],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "id",
-                    "investorId",
-                    "accountId",
-                    "shareClassId",
-                    "sharesAmount",
-                    "amount",
-                    "amountInShareClassCurrency",
-                    "destination",
-                    "createdAt",
-                    "executedAt",
-                    "status",
-                    "shareClassAccountId",
-                    "custodialAccountId"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "investorId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "accountId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "shareClassId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "sharesAmount": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/BigDecimal"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "amount": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Amount"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "amountInShareClassCurrency": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Amount"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "destination": {
-                      "anyOf": [
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "bankAccountId"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "bank-transfer"
-                              ]
-                            },
-                            "bankAccountId": {
-                              "anyOf": [
-                                {
-                                  "type": "string",
-                                  "description": "a Universally Unique Identifier",
-                                  "format": "uuid"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "shareClassId"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "fund-swap"
-                              ]
-                            },
-                            "shareClassId": {
-                              "type": "string",
-                              "description": "a Universally Unique Identifier",
-                              "format": "uuid"
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "iban",
-                            "bic",
-                            "reference"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "loan-repayment"
-                              ]
-                            },
-                            "iban": {
-                              "title": "IBAN",
-                              "type": "string",
-                              "description": "a valid IBAN (International Bank Account Number)"
-                            },
-                            "bic": {
-                              "title": "BIC",
-                              "type": "string",
-                              "description": "A valid BIC (Bank Identifier Code)"
-                            },
-                            "reference": {
-                              "type": "string"
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "collection-returned"
-                              ]
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "walletId"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "stablecoin-transfer"
-                              ]
-                            },
-                            "walletId": {
-                              "type": "string",
-                              "description": "a Universally Unique Identifier",
-                              "format": "uuid"
-                            }
-                          },
-                          "additionalProperties": false
-                        }
-                      ]
-                    },
-                    "createdAt": {
-                      "$ref": "#/components/schemas/Date"
-                    },
-                    "executedAt": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Date"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "pending",
-                        "executed",
-                        "canceled"
-                      ]
-                    },
-                    "shareClassAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    },
-                    "custodialAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/HttpApiDecodeError"
-                    },
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InsufficientBalanceError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "description": "**Deprecated - use withdrawal endpoints instead.** Create a new redemption order for an investor and return the order info.",
-        "summary": "Create a new redemption order",
-        "deprecated": true,
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "accountId",
-                  "shareClassId",
-                  "amount",
-                  "bankAccountId"
-                ],
-                "properties": {
-                  "accountId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  },
-                  "shareClassId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  },
-                  "amount": {
-                    "$ref": "#/components/schemas/NonNegativeAmount"
-                  },
-                  "bankAccountId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  }
-                },
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": true
-        }
-      },
-      "get": {
-        "tags": [
-          "Redemption Orders (deprecated)"
-        ],
-        "operationId": "redemptionOrders.getRedemptionOrders",
-        "parameters": [
-          {
-            "name": "investorId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "description": "a Universally Unique Identifier",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "a Universally Unique Identifier"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "executed",
-                "canceled"
-              ]
-            },
-            "required": false
-          }
-        ],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "investorId",
-                      "accountId",
-                      "shareClassId",
-                      "sharesAmount",
-                      "amount",
-                      "amountInShareClassCurrency",
-                      "destination",
-                      "createdAt",
-                      "executedAt",
-                      "status",
-                      "shareClassAccountId",
-                      "custodialAccountId"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "investorId": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "accountId": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "shareClassId": {
-                        "type": "string",
-                        "description": "a Universally Unique Identifier",
-                        "format": "uuid"
-                      },
-                      "sharesAmount": {
-                        "anyOf": [
-                          {
-                            "$ref": "#/components/schemas/BigDecimal"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "amount": {
-                        "anyOf": [
-                          {
-                            "$ref": "#/components/schemas/Amount"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "amountInShareClassCurrency": {
-                        "anyOf": [
-                          {
-                            "$ref": "#/components/schemas/Amount"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "destination": {
-                        "anyOf": [
-                          {
-                            "type": "object",
-                            "required": [
-                              "type",
-                              "bankAccountId"
-                            ],
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "bank-transfer"
-                                ]
-                              },
-                              "bankAccountId": {
-                                "anyOf": [
-                                  {
-                                    "type": "string",
-                                    "description": "a Universally Unique Identifier",
-                                    "format": "uuid"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              }
-                            },
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "required": [
-                              "type",
-                              "shareClassId"
-                            ],
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "fund-swap"
-                                ]
-                              },
-                              "shareClassId": {
-                                "type": "string",
-                                "description": "a Universally Unique Identifier",
-                                "format": "uuid"
-                              }
-                            },
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "required": [
-                              "type",
-                              "iban",
-                              "bic",
-                              "reference"
-                            ],
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "loan-repayment"
-                                ]
-                              },
-                              "iban": {
-                                "title": "IBAN",
-                                "type": "string",
-                                "description": "a valid IBAN (International Bank Account Number)"
-                              },
-                              "bic": {
-                                "title": "BIC",
-                                "type": "string",
-                                "description": "A valid BIC (Bank Identifier Code)"
-                              },
-                              "reference": {
-                                "type": "string"
-                              }
-                            },
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "required": [
-                              "type"
-                            ],
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "collection-returned"
-                                ]
-                              }
-                            },
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "required": [
-                              "type",
-                              "walletId"
-                            ],
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "stablecoin-transfer"
-                                ]
-                              },
-                              "walletId": {
-                                "type": "string",
-                                "description": "a Universally Unique Identifier",
-                                "format": "uuid"
-                              }
-                            },
-                            "additionalProperties": false
-                          }
-                        ]
-                      },
-                      "createdAt": {
-                        "$ref": "#/components/schemas/Date"
-                      },
-                      "executedAt": {
-                        "anyOf": [
-                          {
-                            "$ref": "#/components/schemas/Date"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "status": {
-                        "type": "string",
-                        "enum": [
-                          "pending",
-                          "executed",
-                          "canceled"
-                        ]
-                      },
-                      "shareClassAccountId": {
-                        "type": "string",
-                        "title": "UUID",
-                        "description": "please now use pair `{accountId, shareClassId}` instead",
-                        "deprecated": true
-                      },
-                      "custodialAccountId": {
-                        "type": "string",
-                        "title": "UUID",
-                        "description": "please now use pair `{accountId, shareClassId}` instead",
-                        "deprecated": true
-                      }
-                    },
-                    "additionalProperties": false
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpApiDecodeError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "NotFound"
-          }
-        },
-        "description": "\n**Deprecated - use withdrawal endpoints instead.** Get all redemption orders for a given investor with optional status filter.\n\n> ⚠️ **For displaying an account's activity, prefer the [account transaction history endpoint](#tag/Account-Transactions/operation/accountTransactions.getAccountTransactions).** It returns deposits, withdrawals, transfers and yield accruals as a single time-ordered stream, with cursor pagination, so you don't need to call multiple per-order-type endpoints and reconcile their results.\n",
-        "summary": "Get list of an investor's redemption orders",
-        "deprecated": true
-      }
-    },
-    "/redemption-orders/instant": {
-      "post": {
-        "tags": [
-          "Redemption Orders (deprecated)"
-        ],
-        "operationId": "redemptionOrders.createInstantRedemptionOrder",
-        "parameters": [],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "id",
-                    "investorId",
-                    "accountId",
-                    "shareClassId",
-                    "amount",
-                    "createdAt",
-                    "destination",
-                    "status"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "investorId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "accountId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "shareClassId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "amount": {
-                      "$ref": "#/components/schemas/NonNegativeAmount"
-                    },
-                    "createdAt": {
-                      "$ref": "#/components/schemas/Date"
-                    },
-                    "destination": {
-                      "type": "object",
-                      "required": [
-                        "type",
-                        "bankAccountId"
-                      ],
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "bank-transfer"
-                          ]
-                        },
-                        "bankAccountId": {
-                          "type": "string",
-                          "description": "a Universally Unique Identifier",
-                          "format": "uuid"
-                        }
-                      },
-                      "additionalProperties": false
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "created",
-                        "executed"
-                      ]
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/HttpApiDecodeError"
-                    },
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InsufficientBalanceError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "503": {
-            "description": "Service Unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ServiceUnavailableError"
-                }
-              }
-            }
-          }
-        },
-        "description": "**Deprecated - use withdrawal endpoints instead.** Create an instant redemption order for an investor. Only available for organization investors who have accepted terms of use.",
-        "summary": "Create a new instant redemption order",
-        "deprecated": true,
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "accountId",
-                  "shareClassId",
-                  "amount",
-                  "bankAccountId"
-                ],
-                "properties": {
-                  "accountId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  },
-                  "shareClassId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  },
-                  "amount": {
-                    "$ref": "#/components/schemas/NonNegativeAmount"
-                  },
-                  "bankAccountId": {
-                    "type": "string",
-                    "description": "a Universally Unique Identifier",
-                    "format": "uuid"
-                  }
-                },
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": true
-        }
-      }
-    },
-    "/redemption-orders/{redemptionOrderId}": {
-      "get": {
-        "tags": [
-          "Redemption Orders (deprecated)"
-        ],
-        "operationId": "redemptionOrders.getRedemptionOrder",
-        "parameters": [
-          {
-            "name": "redemptionOrderId",
-            "in": "path",
-            "schema": {
-              "type": "string",
-              "description": "a Universally Unique Identifier",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "a Universally Unique Identifier"
-          }
-        ],
-        "security": [
-          {
-            "basicAuth": []
-          },
-          {
-            "oauth2": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "id",
-                    "investorId",
-                    "accountId",
-                    "shareClassId",
-                    "sharesAmount",
-                    "amount",
-                    "amountInShareClassCurrency",
-                    "destination",
-                    "createdAt",
-                    "executedAt",
-                    "status",
-                    "shareClassAccountId",
-                    "custodialAccountId"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "investorId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "accountId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "shareClassId": {
-                      "type": "string",
-                      "description": "a Universally Unique Identifier",
-                      "format": "uuid"
-                    },
-                    "sharesAmount": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/BigDecimal"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "amount": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Amount"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "amountInShareClassCurrency": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Amount"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "destination": {
-                      "anyOf": [
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "bankAccountId"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "bank-transfer"
-                              ]
-                            },
-                            "bankAccountId": {
-                              "anyOf": [
-                                {
-                                  "type": "string",
-                                  "description": "a Universally Unique Identifier",
-                                  "format": "uuid"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "shareClassId"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "fund-swap"
-                              ]
-                            },
-                            "shareClassId": {
-                              "type": "string",
-                              "description": "a Universally Unique Identifier",
-                              "format": "uuid"
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "iban",
-                            "bic",
-                            "reference"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "loan-repayment"
-                              ]
-                            },
-                            "iban": {
-                              "title": "IBAN",
-                              "type": "string",
-                              "description": "a valid IBAN (International Bank Account Number)"
-                            },
-                            "bic": {
-                              "title": "BIC",
-                              "type": "string",
-                              "description": "A valid BIC (Bank Identifier Code)"
-                            },
-                            "reference": {
-                              "type": "string"
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "collection-returned"
-                              ]
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "type",
-                            "walletId"
-                          ],
-                          "properties": {
-                            "type": {
-                              "type": "string",
-                              "enum": [
-                                "stablecoin-transfer"
-                              ]
-                            },
-                            "walletId": {
-                              "type": "string",
-                              "description": "a Universally Unique Identifier",
-                              "format": "uuid"
-                            }
-                          },
-                          "additionalProperties": false
-                        }
-                      ]
-                    },
-                    "createdAt": {
-                      "$ref": "#/components/schemas/Date"
-                    },
-                    "executedAt": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/Date"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "pending",
-                        "executed",
-                        "canceled"
-                      ]
-                    },
-                    "shareClassAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    },
-                    "custodialAccountId": {
-                      "type": "string",
-                      "title": "UUID",
-                      "description": "please now use pair `{accountId, shareClassId}` instead",
-                      "deprecated": true
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request did not match the expected schema",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpApiDecodeError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    },
-                    {
-                      "$ref": "#/components/schemas/InvestorAuthenticationError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "NotFound"
-          }
-        },
-        "description": "**Deprecated - use withdrawal endpoints instead.** Get info of a specific redemption order by its ID",
-        "summary": "Get redemption order",
-        "deprecated": true
       }
     },
     "/transfer-orders/": {
@@ -5822,7 +4160,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5839,7 +4177,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "409": {
             "description": "Conflict"
@@ -6087,7 +4439,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6104,7 +4456,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -6237,7 +4603,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6254,7 +4620,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -7981,6 +6361,7 @@
                                 "enum": [
                                   "pending-redemption",
                                   "pending-subscription",
+                                  "pending-subscription-execution",
                                   "executed",
                                   "canceled"
                                 ]
@@ -8166,6 +6547,7 @@
                                 "enum": [
                                   "pending-redemption",
                                   "pending-subscription",
+                                  "pending-subscription-execution",
                                   "executed",
                                   "canceled"
                                 ]
@@ -8534,7 +6916,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8551,7 +6933,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -8617,7 +7013,8 @@
                           "shareClass",
                           "totalNumberOfShares",
                           "totalSharesAmount",
-                          "totalGainSinceStart"
+                          "totalGainSinceStart",
+                          "netAssetValue"
                         ],
                         "properties": {
                           "name": {
@@ -8677,6 +7074,16 @@
                           },
                           "totalGainSinceStart": {
                             "$ref": "#/components/schemas/Amount"
+                          },
+                          "netAssetValue": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/components/schemas/NonNegativeAmount"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -8699,7 +7106,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8716,13 +7123,27 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
           }
         },
-        "description": "Get all portfolio information for a given investor",
+        "description": "Get all portfolio information for a given investor. Each item is one position, i.e. one `{account, shareClass}` pair. `netAssetValue` is the latest published net asset value of **one share** of that share class; `totalSharesAmount` is `totalNumberOfShares × netAssetValue` rounded to 2 decimals, so prefer `netAssetValue` over dividing one by the other. `netAssetValue` and `totalSharesAmount` are always denominated in the share class own currency, so no currency has to be inferred. `netAssetValue` is `null` only for an empty position on a share class that has no published NAV yet.",
         "summary": "Get portfolio of an investor"
       }
     },
@@ -8867,7 +7288,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8884,7 +7305,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "description": "Get the aggregated balance per account across all share classes. The `totalBalance` is the settled on-chain balance, converted to a single currency (defaults to EUR, unless all active positions share a single other currency). `pending.credit` and `pending.debit` expose amounts that are in transition (e.g. a fund-to-fund swap or a subscription/redemption still settling on-chain), so money moving between funds stays visible during the 1-2 day settlement window instead of vanishing. `projectedBalance` anticipates settlement as `totalBalance + pending.credit - pending.debit` (matching the balance shown in the Spiko web app). The `breakdown` gives the settled native balance per currency before conversion.",
@@ -9033,62 +7468,6 @@
                           "additionalProperties": false
                         }
                       ]
-                    },
-                    "mandate": {
-                      "anyOf": [
-                        {
-                          "type": "object",
-                          "required": [
-                            "mandateReference",
-                            "mandateStatus",
-                            "mandateSignedAt"
-                          ],
-                          "properties": {
-                            "mandateReference": {
-                              "type": "string",
-                              "description": "a string matching the pattern ^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$",
-                              "pattern": "^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$"
-                            },
-                            "mandateStatus": {
-                              "type": "string",
-                              "enum": [
-                                "pending-signature"
-                              ]
-                            },
-                            "mandateSignedAt": {
-                              "type": "null"
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "mandateReference",
-                            "mandateStatus",
-                            "mandateSignedAt"
-                          ],
-                          "properties": {
-                            "mandateReference": {
-                              "type": "string",
-                              "description": "a string matching the pattern ^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$",
-                              "pattern": "^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$"
-                            },
-                            "mandateStatus": {
-                              "type": "string",
-                              "enum": [
-                                "signed"
-                              ]
-                            },
-                            "mandateSignedAt": {
-                              "type": "string",
-                              "title": "valid range date",
-                              "description": "A valid date within the range 2020-2100"
-                            }
-                          },
-                          "additionalProperties": false
-                        }
-                      ]
                     }
                   },
                   "additionalProperties": false
@@ -9107,7 +7486,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9124,7 +7503,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -9267,62 +7660,6 @@
                             "additionalProperties": false
                           }
                         ]
-                      },
-                      "mandate": {
-                        "anyOf": [
-                          {
-                            "type": "object",
-                            "required": [
-                              "mandateReference",
-                              "mandateStatus",
-                              "mandateSignedAt"
-                            ],
-                            "properties": {
-                              "mandateReference": {
-                                "type": "string",
-                                "description": "a string matching the pattern ^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$",
-                                "pattern": "^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$"
-                              },
-                              "mandateStatus": {
-                                "type": "string",
-                                "enum": [
-                                  "pending-signature"
-                                ]
-                              },
-                              "mandateSignedAt": {
-                                "type": "null"
-                              }
-                            },
-                            "additionalProperties": false
-                          },
-                          {
-                            "type": "object",
-                            "required": [
-                              "mandateReference",
-                              "mandateStatus",
-                              "mandateSignedAt"
-                            ],
-                            "properties": {
-                              "mandateReference": {
-                                "type": "string",
-                                "description": "a string matching the pattern ^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$",
-                                "pattern": "^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$"
-                              },
-                              "mandateStatus": {
-                                "type": "string",
-                                "enum": [
-                                  "signed"
-                                ]
-                              },
-                              "mandateSignedAt": {
-                                "type": "string",
-                                "title": "valid range date",
-                                "description": "A valid date within the range 2020-2100"
-                              }
-                            },
-                            "additionalProperties": false
-                          }
-                        ]
                       }
                     },
                     "additionalProperties": false
@@ -9342,7 +7679,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9359,7 +7696,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "description": "Get list of bank account's info of an investor (IBAN / BIC)",
@@ -9606,7 +7957,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9623,7 +7974,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -9907,7 +8272,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9924,7 +8289,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -10048,7 +8427,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10065,7 +8444,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -10205,7 +8598,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Authentication failed. Two bodies are possible: the schema below when the API rejects the credentials, and `{ \"error\": { \"code\", \"status\", \"request\", \"message\" } }` when the API gateway rejects them first. Only the former carries a `_tag`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10222,7 +8615,21 @@
             }
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InvestorNonCompliantError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "NotFound"
@@ -10592,6 +8999,30 @@
           }
         ]
       },
+      "InvestorNonCompliantError": {
+        "type": "object",
+        "required": [
+          "reason",
+          "_tag"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "_tag": {
+            "type": "string",
+            "enum": [
+              "InvestorNonCompliantError"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "description": "Forbidden"
+      },
+      "Forbidden": {
+        "$id": "/schemas/void",
+        "title": "Forbidden"
+      },
       "Unauthorized": {
         "$id": "/schemas/void",
         "title": "Unauthorized"
@@ -10614,7 +9045,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Authentication Error"
+        "description": "Authentication rejected by the API, for example a token that does not verify or an API client that no longer resolves."
       },
       "NonEmptyString": {
         "type": "string",
@@ -10648,6 +9079,7 @@
           "PolygonAmoy",
           "BaseSepolia",
           "ArbitrumSepolia",
+          "ArbitrumSepoliaUk",
           "EtherlinkTestnet",
           "Ethereum",
           "Polygon",
@@ -10678,6 +9110,7 @@
           "PolygonAmoy",
           "BaseSepolia",
           "ArbitrumSepolia",
+          "ArbitrumSepoliaUk",
           "EtherlinkTestnet",
           "Ethereum",
           "Polygon",
@@ -10691,6 +9124,26 @@
       "BadRequest": {
         "$id": "/schemas/void",
         "title": "BadRequest"
+      },
+      "NoDepositAccountInCurrencyError": {
+        "type": "object",
+        "required": [
+          "reason",
+          "_tag"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "_tag": {
+            "type": "string",
+            "enum": [
+              "NoDepositAccountInCurrencyError"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "description": "The account has no virtual IBAN in the requested currency to receive this deposit"
       },
       "NonNegativeAmount": {
         "type": "object",
@@ -10769,7 +9222,9 @@
               "IncomingBankTransferNotFound",
               "IncomingBankTransferNotReceived",
               "IncomingBankTransferAlreadyHandled",
-              "IncomingBankTransferAmountMismatch"
+              "IncomingBankTransferAmountMismatch",
+              "MandateAlreadySigned",
+              "BankAccountNotValidated"
             ]
           },
           "_tag": {
@@ -10802,6 +9257,10 @@
         "additionalProperties": false,
         "description": "Collection is no longer cancelable"
       },
+      "BigDecimal": {
+        "type": "string",
+        "description": "a string to be decoded into a BigDecimal"
+      },
       "Amount": {
         "type": "object",
         "required": [
@@ -10820,35 +9279,70 @@
         },
         "additionalProperties": false
       },
-      "BigDecimal": {
-        "type": "string",
-        "description": "a string to be decoded into a BigDecimal"
-      },
-      "SubscriptionNotAllowedError": {
+      "BadRequestError": {
         "type": "object",
         "required": [
-          "shareClassId",
-          "shareClassSymbol",
+          "reason",
           "_tag"
         ],
         "properties": {
-          "shareClassId": {
-            "type": "string",
-            "description": "a Universally Unique Identifier",
-            "format": "uuid"
-          },
-          "shareClassSymbol": {
+          "reason": {
             "type": "string"
           },
           "_tag": {
             "type": "string",
             "enum": [
-              "SubscriptionNotAllowedError"
+              "BadRequestError"
             ]
           }
         },
         "additionalProperties": false,
-        "description": "EUR subscription orders are not allowed for this share class through the investor API, you should directly make a wire instead"
+        "description": "Bad Request"
+      },
+      "StringFromBase64Url": {
+        "type": "string",
+        "description": "A string that is interpreted as being Base64Url-encoded and will be decoded into a UTF-8 string"
+      },
+      "ShareClassSymbol": {
+        "type": "string",
+        "enum": [
+          "EUTBL",
+          "USTBL",
+          "eurUSTBL",
+          "SPKCC",
+          "eurSPKCC",
+          "UKTBL",
+          "eurUKTBL",
+          "SAFO",
+          "SAFOd",
+          "eurSAFO",
+          "eurSAFOd",
+          "gbpSAFO",
+          "gbpSAFOd",
+          "chfSAFO",
+          "sekSAFO",
+          "nokSAFO",
+          "dkkSAFO",
+          "plnSAFO",
+          "hufSAFO",
+          "czkSAFO"
+        ],
+        "title": "ShareClassSymbol"
+      },
+      "Int": {
+        "type": "integer",
+        "description": "an integer",
+        "title": "int"
+      },
+      "Lowercase": {
+        "type": "string",
+        "description": "a string that will be converted to lowercase"
+      },
+      "NonNegativeInt": {
+        "type": "integer",
+        "description": "an integer",
+        "title": "int",
+        "minimum": 0
       },
       "InsufficientBalanceError": {
         "type": "object",
@@ -10952,71 +9446,6 @@
         "additionalProperties": false,
         "description": "Service Unavailable"
       },
-      "BadRequestError": {
-        "type": "object",
-        "required": [
-          "reason",
-          "_tag"
-        ],
-        "properties": {
-          "reason": {
-            "type": "string"
-          },
-          "_tag": {
-            "type": "string",
-            "enum": [
-              "BadRequestError"
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "description": "Bad Request"
-      },
-      "StringFromBase64Url": {
-        "type": "string",
-        "description": "A string that is interpreted as being Base64Url-encoded and will be decoded into a UTF-8 string"
-      },
-      "ShareClassSymbol": {
-        "type": "string",
-        "enum": [
-          "EUTBL",
-          "USTBL",
-          "eurUSTBL",
-          "SPKCC",
-          "eurSPKCC",
-          "UKTBL",
-          "eurUKTBL",
-          "SAFO",
-          "SAFOd",
-          "eurSAFO",
-          "eurSAFOd",
-          "gbpSAFO",
-          "gbpSAFOd",
-          "chfSAFO",
-          "sekSAFO",
-          "nokSAFO",
-          "dkkSAFO",
-          "plnSAFO",
-          "hufSAFO",
-          "czkSAFO"
-        ],
-        "title": "ShareClassSymbol"
-      },
-      "Int": {
-        "type": "integer",
-        "description": "an integer",
-        "title": "int"
-      },
-      "Lowercase": {
-        "type": "string",
-        "description": "a string that will be converted to lowercase"
-      },
-      "NonNegativeInt": {
-        "type": "integer",
-        "description": "an integer",
-        "title": "int",
-        "minimum": 0
-      },
       "NonNegativeBigint": {
         "type": "string",
         "description": "a string to be decoded into a bigint"
@@ -11028,7 +9457,8 @@
           "es",
           "fr",
           "it",
-          "de"
+          "de",
+          "nl"
         ],
         "description": "The language of the user",
         "title": "LocaleLanguage"
@@ -11074,13 +9504,7 @@
       "name": "Deposit Orders"
     },
     {
-      "name": "Subscription Orders (deprecated)"
-    },
-    {
       "name": "Withdrawal Orders"
-    },
-    {
-      "name": "Redemption Orders (deprecated)"
     },
     {
       "name": "Transfer Orders"
