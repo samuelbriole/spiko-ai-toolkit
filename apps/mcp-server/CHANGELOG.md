@@ -1,5 +1,11 @@
 # spiko-mcp
 
+## 0.4.1
+
+### Patch Changes
+
+- [#18](https://github.com/samuelbriole/spiko-ai-toolkit/pull/18) [`ade464b`](https://github.com/samuelbriole/spiko-ai-toolkit/commit/ade464bf0d2239d3f0ea4a395267ac7040c9d853) Thanks [@samuelbriole](https://github.com/samuelbriole)! - Upgrade dependencies to Effect 4.0.0-rc.118 and refresh the Spiko OpenAPI specifications and generated clients.
+
 ## 0.4.0
 
 ### Minor Changes
