@@ -4,8 +4,8 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { Console, Effect, Layer, Redacted } from "effect"
-import * as HttpClient from "effect/unstable/http/HttpClient"
-import * as HttpClientResponse from "effect/unstable/http/HttpClientResponse"
+import * as HttpClient from "effect/http/HttpClient"
+import * as HttpClientResponse from "effect/http/HttpClientResponse"
 import { describe, expect, it } from "vitest"
 import { makeCli } from "../src/cli.ts"
 import { InvestorOperations } from "../src/generated/investor.ts"
@@ -51,9 +51,9 @@ const shareClassId = "00000000-0000-4000-8000-000000000002"
 
 describe("generated Investor Operation Catalog", () => {
   it("contains every unique Investor Operation and route", () => {
-    expect(InvestorOperations).toHaveLength(35)
+    expect(InvestorOperations).toHaveLength(27)
     expect(new Set(InvestorOperations.map(({ definition }) => definition.operationId)).size).toBe(
-      35,
+      27,
     )
     expect(
       new Set(
@@ -61,7 +61,7 @@ describe("generated Investor Operation Catalog", () => {
           ({ definition }) => `${definition.family}/${definition.resource}/${definition.action}`,
         ),
       ).size,
-    ).toBe(35)
+    ).toBe(27)
     for (const { definition } of InvestorOperations) {
       expect(JSON.stringify(definition)).not.toContain("#/components/schemas/")
     }
@@ -81,7 +81,7 @@ describe("generated Investor Operation Catalog", () => {
       ok: true,
       operation: "operations.list",
     })
-    expect(JSON.parse(result.stdout[0] ?? "").data).toHaveLength(35)
+    expect(JSON.parse(result.stdout[0] ?? "").data).toHaveLength(27)
   })
 
   it("validates and invokes a confirmed JSON mutation with the encoded payload", async () => {

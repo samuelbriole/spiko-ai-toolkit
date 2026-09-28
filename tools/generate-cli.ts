@@ -6,7 +6,7 @@ import type {
   OpenAPISpecMethodName,
   OpenAPISpecOperation,
   OpenAPISpecParameter,
-} from "effect/unstable/httpapi/OpenApi"
+} from "effect/http-api/OpenApi"
 import { routeOperations } from "./cli-routes.ts"
 
 export interface CliSourceDocument {
@@ -301,7 +301,7 @@ const renderScalarFlag = (binding: ParameterBinding): string => {
   const { flag, parameter, schema } = binding
   const values = enumValues(schema)
   if (values !== undefined) {
-    return `Flag.choice(${JSON.stringify(flag)}, ${JSON.stringify(values)})`
+    return `Flag.Literals(${JSON.stringify(flag)}, ${JSON.stringify(values)})`
   }
 
   if (stringProperty(schema, "type") !== "string") {
@@ -309,7 +309,7 @@ const renderScalarFlag = (binding: ParameterBinding): string => {
   }
   const checks = stringSchemaChecks(parameter, schema)
   if (checks.length === 0) {
-    return `Flag.string(${JSON.stringify(flag)})`
+    return `Flag.String(${JSON.stringify(flag)})`
   }
   const metavar =
     stringProperty(schema, "format") === "uuid"
@@ -317,7 +317,7 @@ const renderScalarFlag = (binding: ParameterBinding): string => {
       : dayLike(schema)
         ? "YYYY-MM-DD"
         : undefined
-  return `Flag.string(${JSON.stringify(flag)}).pipe(\n      Flag.withSchema(Schema.String.check(${checks.join(", ")})),${
+  return `Flag.String(${JSON.stringify(flag)}).pipe(\n      Flag.withSchema(Schema.String.check(${checks.join(", ")})),${
     metavar === undefined ? "" : `\n      Flag.withMetavar(${JSON.stringify(metavar)}),`
   }\n    )`
 }
@@ -539,7 +539,7 @@ const renderMultipartField = (field: MultipartFieldBinding): string => {
     throw new Error(`Optional multipart field ${field.name} is not supported`)
   }
   if (field.file) {
-    return `Flag.string(${JSON.stringify(field.flag)}).pipe(\n      Flag.between(1, 1),\n      Flag.withMetavar("FILE"),\n      Flag.withDescription(${JSON.stringify(`Required multipart file: ${field.name}. Accepted extensions: ${field.acceptedExtensions.join(", ")}. Exactly one file.`)}),\n    )`
+    return `Flag.String(${JSON.stringify(field.flag)}).pipe(\n      Flag.between(1, 1),\n      Flag.withMetavar("FILE"),\n      Flag.withDescription(${JSON.stringify(`Required multipart file: ${field.name}. Accepted extensions: ${field.acceptedExtensions.join(", ")}. Exactly one file.`)}),\n    )`
   }
   const parameter: OpenAPISpecParameter = {
     description: schemaLabel(field.schema) ?? field.name,
@@ -633,7 +633,7 @@ const renderOperation = (
       ? []
       : body.kind === "json"
         ? [
-            `    "payload": Flag.string("payload").pipe(\n      Flag.withMetavar("FILE"),\n      Flag.withDescription("Required ${body.mediaType} request body file"),\n    ),`,
+            `    "payload": Flag.String("payload").pipe(\n      Flag.withMetavar("FILE"),\n      Flag.withDescription("Required ${body.mediaType} request body file"),\n    ),`,
           ]
         : body.fields.map(
             (field) =>
@@ -641,7 +641,7 @@ const renderOperation = (
           )),
     ...(mutation
       ? [
-          '    "confirm": Flag.boolean("confirm").pipe(Flag.withDescription("Confirm this mutating Spiko Operation")),',
+          '    "confirm": Flag.Boolean("confirm").pipe(Flag.withDescription("Confirm this mutating Spiko Operation")),',
         ]
       : []),
   ].join("\n")
@@ -762,7 +762,7 @@ const renderFamily = (document: OpenAPISpec, generation: FamilyGeneration): stri
 
 import * as ${generation.clientModule} from "@spiko/${generation.family}-api-client"
 import { Effect, Option, Schema } from "effect"
-import { Flag } from "effect/unstable/cli"
+import { Flag } from "effect/cli"
 import { defineOperation${bodyHelperImports.length > 0 ? `, ${bodyHelperImports.join(", ")}` : ""} } from "../cli.ts"
 
 ${rendered.map(({ source }) => source).join("\n\n")}
@@ -793,7 +793,7 @@ export const generateCliFiles = (
         clientMethods: publicDocument.clientMethods,
         clientModule: "Public",
         clientTag: "Public.PublicApi",
-        count: 15,
+        count: 16,
         family: "public",
       }),
       path: "apps/cli/src/generated/public.ts",
@@ -803,7 +803,7 @@ export const generateCliFiles = (
         clientMethods: investorDocument.clientMethods,
         clientModule: "Investor",
         clientTag: "Investor.InvestorApi",
-        count: 35,
+        count: 27,
         family: "investor",
       }),
       path: "apps/cli/src/generated/investor.ts",
@@ -813,7 +813,7 @@ export const generateCliFiles = (
         clientMethods: distributorDocument.clientMethods,
         clientModule: "Distributor",
         clientTag: "Distributor.DistributorApi",
-        count: 65,
+        count: 72,
         family: "distributor",
       }),
       path: "apps/cli/src/generated/distributor.ts",

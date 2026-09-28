@@ -1,6 +1,6 @@
 import { Config, Context, Effect, Layer, Option, Redacted } from "effect"
-import * as HttpClient from "effect/unstable/http/HttpClient"
-import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest"
+import * as HttpClient from "effect/http/HttpClient"
+import * as HttpClientRequest from "effect/http/HttpClientRequest"
 import * as Generated from "./generated.ts"
 
 export * from "./generated.ts"
@@ -46,10 +46,10 @@ export class InvestorApi extends Context.Service<InvestorApi, Generated.SpikoInv
 
 export const makeFromConfig = Effect.gen(function* () {
   const httpClient = yield* HttpClient.HttpClient
-  const baseUrl = yield* Config.string("SPIKO_INVESTOR_API_BASE_URL").pipe(
+  const baseUrl = yield* Config.String("SPIKO_INVESTOR_API_BASE_URL").pipe(
     Config.withDefault(defaultBaseUrl),
   )
-  const accessToken = yield* Config.option(Config.redacted("SPIKO_INVESTOR_ACCESS_TOKEN"))
+  const accessToken = yield* Config.option(Config.Redacted("SPIKO_INVESTOR_ACCESS_TOKEN"))
 
   if (Option.isSome(accessToken)) {
     return make(httpClient, {
@@ -58,8 +58,8 @@ export const makeFromConfig = Effect.gen(function* () {
     })
   }
 
-  const clientId = yield* Config.redacted("SPIKO_INVESTOR_CLIENT_ID")
-  const clientSecret = yield* Config.redacted("SPIKO_INVESTOR_CLIENT_SECRET")
+  const clientId = yield* Config.Redacted("SPIKO_INVESTOR_CLIENT_ID")
+  const clientSecret = yield* Config.Redacted("SPIKO_INVESTOR_CLIENT_SECRET")
   return make(httpClient, {
     auth: { clientId, clientSecret, type: "basic" },
     baseUrl,

@@ -1,6 +1,6 @@
 import { Config, Context, Effect, Layer } from "effect"
-import * as HttpClient from "effect/unstable/http/HttpClient"
-import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest"
+import * as HttpClient from "effect/http/HttpClient"
+import * as HttpClientRequest from "effect/http/HttpClientRequest"
 import * as Generated from "./generated.ts"
 
 export * from "./generated.ts"
@@ -34,7 +34,7 @@ export class PublicApi extends Context.Service<PublicApi, PublicApiClient>()(
 
 export const makeFromConfig = Effect.gen(function* () {
   const httpClient = yield* HttpClient.HttpClient
-  const baseUrl = yield* Config.string("SPIKO_PUBLIC_API_BASE_URL").pipe(
+  const baseUrl = yield* Config.String("SPIKO_PUBLIC_API_BASE_URL").pipe(
     Config.withDefault(defaultBaseUrl),
   )
   return make(httpClient, { baseUrl })

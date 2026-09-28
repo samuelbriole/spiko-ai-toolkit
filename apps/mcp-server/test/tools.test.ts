@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { Context } from "effect"
-import { Tool } from "effect/unstable/ai"
+import { Tool } from "effect/ai"
 import { SpikoToolkit } from "../src/tools.ts"
 
 describe("SpikoToolkit", () => {

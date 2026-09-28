@@ -3,26 +3,26 @@ packages:
   - packages/*
 
 catalog:
-  "@effect/platform-node": 4.0.0-rc.112
-  "@types/node": 24.13.3
-  effect: 4.0.0-rc.112
-  rolldown: 1.2.5
+  "@effect/platform-node": 4.0.0-rc.118
+  "@types/node": 24.19.0
+  effect: 4.0.0-rc.118
+  rolldown: 1.2.11
   typescript: 7.0.2
-  vitest: 4.1.11
+  vitest: 5.0.2
 
 allowBuilds:
   msgpackr-extract: false
 
 minimumReleaseAgeExclude:
-  - "@effect/openapi-generator@4.0.0-rc.112"
-  - "@effect/platform-node-shared@4.0.0-rc.112"
-  - "@effect/platform-node@4.0.0-rc.112"
-  - effect@4.0.0-rc.112
-  - "@effect/tsgo-darwin-arm64@0.36.5"
-  - "@effect/tsgo-darwin-x64@0.36.5"
-  - "@effect/tsgo-linux-arm64@0.36.5"
-  - "@effect/tsgo-linux-arm@0.36.5"
-  - "@effect/tsgo-linux-x64@0.36.5"
-  - "@effect/tsgo-win32-arm64@0.36.5"
-  - "@effect/tsgo-win32-x64@0.36.5"
-  - "@effect/tsgo@0.36.5"
+  - "@effect/openapi-generator@4.0.0-rc.118"
+  - "@effect/platform-node-shared@4.0.0-rc.118"
+  - "@effect/platform-node@4.0.0-rc.118"
+  - effect@4.0.0-rc.118
+  - "@effect/tsgo-darwin-arm64@0.46.1"
+  - "@effect/tsgo-darwin-x64@0.46.1"
+  - "@effect/tsgo-linux-arm64@0.46.1"
+  - "@effect/tsgo-linux-arm@0.46.1"
+  - "@effect/tsgo-linux-x64@0.46.1"
+  - "@effect/tsgo-win32-arm64@0.46.1"
+  - "@effect/tsgo-win32-x64@0.46.1"
+  - "@effect/tsgo@0.46.1"

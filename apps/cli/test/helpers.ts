@@ -1,8 +1,8 @@
 import { Console, Effect, FileSystem, Layer, Option, Path, Stdio, Terminal } from "effect"
-import * as HttpClient from "effect/unstable/http/HttpClient"
-import * as HttpClientError from "effect/unstable/http/HttpClientError"
-import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest"
-import * as ChildProcessSpawner from "effect/unstable/process/ChildProcessSpawner"
+import * as HttpClient from "effect/http/HttpClient"
+import * as HttpClientError from "effect/http/HttpClientError"
+import * as HttpClientRequest from "effect/http/HttpClientRequest"
+import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner"
 import { type DefinedOperation, type SpikoFamily } from "../src/cli.ts"
 
 // Annotated (not a bare []) so makeCli's requirement generics infer `never`

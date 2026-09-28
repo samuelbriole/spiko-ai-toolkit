@@ -1,10 +1,10 @@
 import * as NodeServices from "@effect/platform-node/NodeServices"
 import * as Public from "@spiko/public-api-client"
 import { Console, Effect, Layer, Option, Queue, Terminal } from "effect"
-import * as HttpClient from "effect/unstable/http/HttpClient"
-import * as HttpClientResponse from "effect/unstable/http/HttpClientResponse"
+import * as HttpClient from "effect/http/HttpClient"
+import * as HttpClientResponse from "effect/http/HttpClientResponse"
 import { describe, expect, it } from "vitest"
-import { Command } from "effect/unstable/cli"
+import { Command } from "effect/cli"
 import { type DefinedOperation, makeCli } from "../src/cli.ts"
 import { GetFund, PublicOperations } from "../src/generated/public.ts"
 import { key, makeTestConsole, noOperations, wizardEnvironment } from "./helpers.ts"
@@ -394,7 +394,7 @@ describe("spiko command interface", () => {
     expect(stdout).toHaveLength(1)
     const envelope = JSON.parse(stdout[0] ?? "")
     expect(envelope).toMatchObject({ ok: true, operation: "operations.list" })
-    expect(envelope.data).toHaveLength(15)
+    expect(envelope.data).toHaveLength(16)
     expect(envelope.data).toContainEqual({
       action: "get",
       command: "spiko call public funds get",

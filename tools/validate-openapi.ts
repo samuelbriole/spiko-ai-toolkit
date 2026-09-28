@@ -1,5 +1,5 @@
 import { Predicate } from "effect"
-import type { OpenAPISpec } from "effect/unstable/httpapi/OpenApi"
+import type { OpenAPISpec } from "effect/http-api/OpenApi"
 
 const methods = ["delete", "get", "head", "options", "patch", "post", "put", "trace"] as const
 
