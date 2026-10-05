@@ -2585,6 +2585,7 @@
                 "schema": {
                   "type": "object",
                   "required": [
+                    "depositOrderId",
                     "investorId",
                     "amount",
                     "shareClassId",
@@ -2595,6 +2596,11 @@
                     "scheduledDate"
                   ],
                   "properties": {
+                    "depositOrderId": {
+                      "type": "string",
+                      "description": "a Universally Unique Identifier",
+                      "format": "uuid"
+                    },
                     "investorId": {
                       "type": "string",
                       "description": "a Universally Unique Identifier",
@@ -2646,7 +2652,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HttpApiDecodeError"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/HttpApiDecodeError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ApplicationError"
+                    }
+                  ]
                 }
               }
             }
@@ -2689,7 +2702,7 @@
             "description": "NotFound"
           }
         },
-        "description": "Create a new SEPA Direct Debit collection for an account. Only allowed for EUTBL and eurSAFO share classes, for professional investors for whom the feature has been enabled and who have signed a mandate on app.spiko.io.",
+        "description": "Create a new SEPA Direct Debit collection for an account. Only allowed for EUTBL and eurSAFO share classes, for professional investors for whom the feature has been enabled and who have signed a mandate on app.spiko.io. Returns HTTP 400 (`ApplicationError`) when the bank account cannot be debited, with `customErrorCode` `MandateNotSigned` when it has no signed mandate.",
         "summary": "Create a new deposit order via SEPA Direct Debit",
         "requestBody": {
           "content": {
@@ -7468,6 +7481,33 @@
                           "additionalProperties": false
                         }
                       ]
+                    },
+                    "mandate": {
+                      "type": "object",
+                      "required": [
+                        "mandateReference",
+                        "mandateStatus",
+                        "mandateSignedAt"
+                      ],
+                      "properties": {
+                        "mandateReference": {
+                          "type": "string",
+                          "description": "a string matching the pattern ^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$",
+                          "pattern": "^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$"
+                        },
+                        "mandateStatus": {
+                          "type": "string",
+                          "enum": [
+                            "signed"
+                          ]
+                        },
+                        "mandateSignedAt": {
+                          "type": "string",
+                          "title": "valid range date",
+                          "description": "A valid date within the range 2020-2100"
+                        }
+                      },
+                      "additionalProperties": false
                     }
                   },
                   "additionalProperties": false
@@ -7660,6 +7700,33 @@
                             "additionalProperties": false
                           }
                         ]
+                      },
+                      "mandate": {
+                        "type": "object",
+                        "required": [
+                          "mandateReference",
+                          "mandateStatus",
+                          "mandateSignedAt"
+                        ],
+                        "properties": {
+                          "mandateReference": {
+                            "type": "string",
+                            "description": "a string matching the pattern ^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$",
+                            "pattern": "^[A-Za-z0-9+?/\\-:().,'\\s]{1,35}$"
+                          },
+                          "mandateStatus": {
+                            "type": "string",
+                            "enum": [
+                              "signed"
+                            ]
+                          },
+                          "mandateSignedAt": {
+                            "type": "string",
+                            "title": "valid range date",
+                            "description": "A valid date within the range 2020-2100"
+                          }
+                        },
+                        "additionalProperties": false
                       }
                     },
                     "additionalProperties": false
@@ -9224,6 +9291,7 @@
               "IncomingBankTransferAlreadyHandled",
               "IncomingBankTransferAmountMismatch",
               "MandateAlreadySigned",
+              "MandateNotSigned",
               "BankAccountNotValidated"
             ]
           },
