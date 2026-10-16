@@ -234,7 +234,10 @@ describe("spiko command interface", () => {
             in: "path",
             name: "fundId",
             required: true,
-            schema: { format: "uuid", type: "string" },
+            schema: {
+              $ref: "#/$defs/UUID",
+              $defs: { UUID: { format: "uuid", type: "string" } },
+            },
           },
         ],
         path: "/funds/{fundId}",
@@ -394,7 +397,7 @@ describe("spiko command interface", () => {
     expect(stdout).toHaveLength(1)
     const envelope = JSON.parse(stdout[0] ?? "")
     expect(envelope).toMatchObject({ ok: true, operation: "operations.list" })
-    expect(envelope.data).toHaveLength(16)
+    expect(envelope.data).toHaveLength(17)
     expect(envelope.data).toContainEqual({
       action: "get",
       command: "spiko call public funds get",

@@ -41,20 +41,44 @@ const PublicUnusedLayer = Layer.effect(
 
 describe("generated Public Operation Catalog", () => {
   it("contains every unique Public Operation with self-contained schemas and routes", () => {
-    expect(PublicOperations).toHaveLength(16)
-    expect(new Set(PublicOperations.map(({ definition }) => definition.operationId)).size).toBe(16)
+    expect(PublicOperations).toHaveLength(17)
+    expect(new Set(PublicOperations.map(({ definition }) => definition.operationId)).size).toBe(17)
     expect(
       new Set(
         PublicOperations.map(
           ({ definition }) => `${definition.family}/${definition.resource}/${definition.action}`,
         ),
       ).size,
-    ).toBe(16)
+    ).toBe(17)
 
     for (const { definition } of PublicOperations) {
       expect(JSON.stringify(definition)).not.toContain("#/components/schemas/")
       expect(definition.responses.length).toBeGreaterThan(0)
     }
+  })
+
+  it("discovers wallet whitelist status without acquiring the client", async () => {
+    const result = await run(PublicUnusedLayer, [
+      "operations",
+      "describe",
+      "public",
+      "Get Wallet Whitelist Status",
+    ])
+
+    expect(result.exitCode).toBe(0)
+    expect(result.stderr).toEqual([])
+    const envelope = JSON.parse(result.stdout[0] ?? "")
+    expect(envelope.data).toMatchObject({
+      operationId: "Get Wallet Whitelist Status",
+      path: "/whitelists/{network}/{tokenAddress}/{walletAddress}",
+    })
+    expect(envelope.data.parameters).toEqual(
+      expect.arrayContaining(
+        ["network", "token-address", "wallet-address"].map((flag) =>
+          expect.objectContaining({ flag, required: true }),
+        ),
+      ),
+    )
   })
 
   it("describes resolved parameter and response schemas without acquiring the client", async () => {
@@ -83,7 +107,12 @@ describe("generated Public Operation Catalog", () => {
         expect.objectContaining({
           flag: "fund-id",
           required: true,
-          schema: expect.objectContaining({ format: "uuid", type: "string" }),
+          schema: expect.objectContaining({
+            $ref: "#/$defs/UUID",
+            $defs: expect.objectContaining({
+              UUID: expect.objectContaining({ format: "uuid", type: "string" }),
+            }),
+          }),
         }),
         expect.objectContaining({
           flag: "quote-currency",

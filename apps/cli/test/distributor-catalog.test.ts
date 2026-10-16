@@ -81,11 +81,11 @@ describe("generated Distributor Operation Catalog", () => {
     const bytes = new Uint8Array([37, 80, 68, 70, 1, 2, 3])
     const testFile = await writeTestFile("identity.pdf", bytes)
     const calls: Array<unknown> = []
-    let uploaded: File | undefined
+    let uploaded: Blob | undefined
     const layer = Layer.mock(Distributor.DistributorApi, {
       httpClient: deadHttpClient,
       investorDocumentsUploadInvestorDocument: (options) => {
-        uploaded = options.payload.file[0]
+        uploaded = options.payload.file
         return Effect.sync(() =>
           calls.push({
             investorId: options.payload.investorId,
@@ -113,7 +113,7 @@ describe("generated Distributor Operation Catalog", () => {
       expect(result.exitCode).toBe(1)
       expect(calls).toEqual([{ investorId, type: "official-id" }])
       expect(uploaded).toBeInstanceOf(File)
-      if (uploaded === undefined) {
+      if (!(uploaded instanceof File)) {
         throw new Error("Expected the uploaded file")
       }
       expect(uploaded.name).toBe("identity.pdf")

@@ -40,11 +40,13 @@ type ApiDefinition = (typeof apis)[number]
 
 const parseJson = Schema.decodeUnknownEffect(Schema.fromJsonString(Schema.Json))
 
-const generatedClientMethods = (source: string): ReadonlySet<string> =>
+export const generatedClientMethods = (source: string): ReadonlySet<string> =>
   new Set(
-    Array.from(source.matchAll(/^\s*readonly "([^"]+)": <Config/gm), (match) => match[1]).filter(
-      (method): method is string => method !== undefined,
-    ),
+    // Operations can be function properties or objects containing call overloads.
+    Array.from(
+      source.matchAll(/^\s*readonly "([^"]+)":\s*(?:\{\s*)?(?:<|\()/gm),
+      (match) => match[1],
+    ).filter((method): method is string => method !== undefined),
   )
 
 const readSpec = (definition: ApiDefinition, fetch: boolean) =>
@@ -150,12 +152,14 @@ const generate = Command.make("generate-clients", { fetch }, ({ fetch }) =>
   }),
 )
 
-Command.run(generate, { version: "0.1.0" }).pipe(
-  Effect.provide([
-    OpenApiGenerator.layerTransformerSchema,
-    NodeHttpClient.layerUndici,
-    NodeServices.layer,
-  ]),
-  Effect.tapCause((cause) => Console.error(Cause.pretty(cause))),
-  NodeRuntime.runMain,
-)
+if (import.meta.main) {
+  Command.run(generate, { version: "0.1.0" }).pipe(
+    Effect.provide([
+      OpenApiGenerator.layerTransformerSchema,
+      NodeHttpClient.layerUndici,
+      NodeServices.layer,
+    ]),
+    Effect.tapCause((cause) => Console.error(Cause.pretty(cause))),
+    NodeRuntime.runMain,
+  )
+}

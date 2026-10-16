@@ -31,7 +31,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Upgrade npm for trusted publishing
-        run: npm install --global npm@11
+        run: npm install --global npm@12
       - name: Create release pull request or publish
         uses: changesets/action@v2
         with:

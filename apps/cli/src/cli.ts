@@ -94,26 +94,29 @@ export interface DefinedOperation<
   >
 }
 
-class OperationFailure extends Schema.TaggedError<OperationFailure>()("OperationFailure", {
+class OperationFailure extends Schema.TaggedError<
+  OperationFailure,
+  { readonly brand: unique symbol }
+>()("OperationFailure", {
   cause: Schema.Defect(),
   operation: Schema.String,
 }) {}
 
-class OperationInternalFailure extends Schema.TaggedError<OperationInternalFailure>()(
-  "OperationInternalFailure",
-  {
-    cause: Schema.Defect(),
-    operation: Schema.String,
-  },
-) {}
+class OperationInternalFailure extends Schema.TaggedError<
+  OperationInternalFailure,
+  { readonly brand: unique symbol }
+>()("OperationInternalFailure", {
+  cause: Schema.Defect(),
+  operation: Schema.String,
+}) {}
 
-class OperationInputFailure extends Schema.TaggedError<OperationInputFailure>()(
-  "OperationInputFailure",
-  {
-    cause: Schema.Defect(),
-    operation: Schema.String,
-  },
-) {}
+class OperationInputFailure extends Schema.TaggedError<
+  OperationInputFailure,
+  { readonly brand: unique symbol }
+>()("OperationInputFailure", {
+  cause: Schema.Defect(),
+  operation: Schema.String,
+}) {}
 
 const invalidPayload = (expected: string, value: string) =>
   new CliError.InvalidValue({
