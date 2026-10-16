@@ -13,6 +13,18 @@
     "plugins": [
       {
         "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node",
+          "effect/ai",
+          "effect/cli",
+          "effect/FileSystem",
+          "effect/http",
+          "effect/http-api",
+          "effect/Path",
+          "effect/process",
+          "effect/Stdio",
+          "effect/Terminal"
+        ],
         "diagnostics": true,
         "includeSuggestionsInTsc": false
       }

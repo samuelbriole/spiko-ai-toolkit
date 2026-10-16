@@ -42,7 +42,7 @@ describe("Distributor client", () => {
       client
         .investorDocumentsUploadInvestorDocument({
           payload: {
-            file: [file],
+            file,
             investorId: "00000000-0000-4000-8000-000000000001",
             type: "official-id",
           },

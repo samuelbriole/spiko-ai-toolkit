@@ -27,7 +27,7 @@ const documentWithSuccessMediaType = (mediaType: string): OpenAPISpec => ({
 })
 
 describe("OpenAPI generation validation", () => {
-  it("accepts media types supported by the RC generator", () => {
+  it("accepts media types supported by the generator", () => {
     expect(
       findUnsupportedSuccessMediaTypes(documentWithSuccessMediaType("application/pdf")),
     ).toEqual([])

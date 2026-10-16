@@ -297,8 +297,80 @@ const stringSchemaChecks = (
   ]
 }
 
-const renderScalarFlag = (binding: ParameterBinding): string => {
+// Union branches must be validated independently: flattening them to a plain
+// string flag would silently discard branch constraints. Keep this deliberately
+// narrower than JSON Schema and fail closed on every unsupported keyword.
+const renderStringUnionSchema = (
+  document: OpenAPISpec,
+  parameter: OpenAPISpecParameter,
+  schema: object,
+  ancestors: ReadonlySet<object> = new Set(),
+): string => {
+  if (ancestors.has(schema)) {
+    throw new Error(`${parameter.name}: recursive parameter unions are not supported`)
+  }
+  const next = new Set([...ancestors, schema])
+  const reference = referenceName(schema)
+  if (reference !== undefined) {
+    if (Object.keys(schema).some((key) => !["$ref", "title", "description"].includes(key))) {
+      throw new Error(`${parameter.name}: unsupported parameter reference siblings`)
+    }
+    const rendered = renderStringUnionSchema(
+      document,
+      parameter,
+      componentSchema(document, reference),
+      next,
+    )
+    const checks = stringSchemaChecks(parameter, schema)
+    return checks.length === 0 ? rendered : `${rendered}.check(${checks.join(", ")})`
+  }
+  const unsupported = Object.keys(schema).filter(
+    (key) =>
+      !["type", "title", "description", "anyOf", "enum", "format", "minLength"].includes(key),
+  )
+  if (unsupported.length > 0) {
+    throw new Error(
+      `${parameter.name}: unsupported parameter constraint(s): ${unsupported.join(", ")}`,
+    )
+  }
+  const branches = property(schema, "anyOf")
+  const type = stringProperty(schema, "type")
+  let rendered: string
+  if (branches !== undefined) {
+    if (
+      (property(schema, "type") !== undefined && type !== "string") ||
+      property(schema, "enum") !== undefined ||
+      !Array.isArray(branches) ||
+      branches.length === 0 ||
+      !branches.every(Predicate.isObject)
+    ) {
+      throw new Error(`${parameter.name}: unsupported parameter union ${JSON.stringify(schema)}`)
+    }
+    rendered = `Schema.Union([${branches.map((branch) => renderStringUnionSchema(document, parameter, branch, next)).join(", ")}])`
+  } else {
+    const values = enumValues(schema)
+    if (type !== "string" || (property(schema, "enum") !== undefined && values === undefined)) {
+      throw new Error(`${parameter.name}: unsupported parameter schema ${JSON.stringify(schema)}`)
+    }
+    rendered = values === undefined ? "Schema.String" : `Schema.Literals(${JSON.stringify(values)})`
+  }
+  // Reject malformed constraints too, rather than treating them as absent.
+  if (
+    (property(schema, "format") !== undefined && stringProperty(schema, "format") === undefined) ||
+    (property(schema, "minLength") !== undefined &&
+      numberProperty(schema, "minLength") === undefined)
+  ) {
+    throw new Error(`${parameter.name}: malformed string parameter constraints`)
+  }
+  const checks = stringSchemaChecks(parameter, schema)
+  return checks.length === 0 ? rendered : `${rendered}.check(${checks.join(", ")})`
+}
+
+const renderScalarFlag = (binding: ParameterBinding, document: OpenAPISpec): string => {
   const { flag, parameter, schema } = binding
+  if (property(schema, "anyOf") !== undefined) {
+    return `Flag.String(${JSON.stringify(flag)}).pipe(\n      Flag.withSchema(${renderStringUnionSchema(document, parameter, schema)}),\n    )`
+  }
   const values = enumValues(schema)
   if (values !== undefined) {
     return `Flag.Literals(${JSON.stringify(flag)}, ${JSON.stringify(values)})`
@@ -322,7 +394,7 @@ const renderScalarFlag = (binding: ParameterBinding): string => {
   }\n    )`
 }
 
-const renderFlag = (binding: ParameterBinding): string => {
+const renderFlag = (binding: ParameterBinding, document: OpenAPISpec): string => {
   const { parameter, schema } = binding
   const type = stringProperty(schema, "type")
   const isArray = type === "array"
@@ -332,9 +404,9 @@ const renderFlag = (binding: ParameterBinding): string => {
     if (!Predicate.isObject(items)) {
       throw new Error(`${parameter.name}: array parameter must declare an item schema`)
     }
-    rendered = renderScalarFlag({ ...binding, schema: items })
+    rendered = renderScalarFlag({ ...binding, schema: items }, document)
   } else {
-    rendered = renderScalarFlag(binding)
+    rendered = renderScalarFlag(binding, document)
   }
 
   const requiredness = parameter.required ? "Required" : "Optional"
@@ -403,6 +475,7 @@ interface MultipartFieldBinding {
   readonly acceptedExtensions: ReadonlyArray<string>
   readonly configKey: string
   readonly file: boolean
+  readonly fileArray: boolean
   readonly flag: string
   readonly name: string
   readonly required: boolean
@@ -459,11 +532,15 @@ const multipartFields = (
     const resolvedField = resolveRootSchema(document, fieldSchema)
     const items = property(resolvedField, "items")
     const resolvedItems = Predicate.isObject(items) ? resolveRootSchema(document, items) : undefined
-    const file =
+    const fileArray =
       stringProperty(resolvedField, "type") === "array" &&
       resolvedItems !== undefined &&
       stringProperty(resolvedItems, "format") === "binary"
-    if (file) {
+    const file =
+      fileArray ||
+      (stringProperty(resolvedField, "type") === "string" &&
+        stringProperty(resolvedField, "format") === "binary")
+    if (fileArray) {
       if (property(resolvedField, "minItems") !== 1 || property(resolvedField, "maxItems") !== 1) {
         throw new Error(`Multipart file field ${name} must require exactly one file`)
       }
@@ -475,6 +552,7 @@ const multipartFields = (
       acceptedExtensions: file ? supportedExtensions(source) : [],
       configKey: camelize(flag),
       file,
+      fileArray,
       flag,
       name,
       required: required.includes(name),
@@ -534,7 +612,7 @@ const requestBodyBinding = (
   )
 }
 
-const renderMultipartField = (field: MultipartFieldBinding): string => {
+const renderMultipartField = (field: MultipartFieldBinding, document: OpenAPISpec): string => {
   if (!field.required) {
     throw new Error(`Optional multipart field ${field.name} is not supported`)
   }
@@ -548,12 +626,15 @@ const renderMultipartField = (field: MultipartFieldBinding): string => {
     required: field.required,
     schema: field.schema,
   }
-  const rendered = renderScalarFlag({
-    configKey: field.configKey,
-    flag: field.flag,
-    parameter,
-    schema: field.schema,
-  })
+  const rendered = renderScalarFlag(
+    {
+      configKey: field.configKey,
+      flag: field.flag,
+      parameter,
+      schema: field.schema,
+    },
+    document,
+  )
   return `${rendered}.pipe(\n      Flag.withDescription(${JSON.stringify(`Required multipart field: ${field.name} — ${schemaLabel(field.schema) ?? field.name}`)}),\n    )`
 }
 
@@ -627,7 +708,7 @@ const renderOperation = (
   const renderedParameters = [
     ...bindings.map(
       (binding) =>
-        `    ${JSON.stringify(binding.configKey)}: ${renderFlag(binding).replaceAll("\n", "\n    ")},`,
+        `    ${JSON.stringify(binding.configKey)}: ${renderFlag(binding, document).replaceAll("\n", "\n    ")},`,
     ),
     ...(body === undefined
       ? []
@@ -637,7 +718,7 @@ const renderOperation = (
           ]
         : body.fields.map(
             (field) =>
-              `    ${JSON.stringify(field.configKey)}: ${renderMultipartField(field).replaceAll("\n", "\n    ")},`,
+              `    ${JSON.stringify(field.configKey)}: ${renderMultipartField(field, document).replaceAll("\n", "\n    ")},`,
           )),
     ...(mutation
       ? [
@@ -654,7 +735,7 @@ const renderOperation = (
       ? "input => Effect.succeed(input)"
       : body.kind === "json"
         ? `input => readJsonPayload(input["payload"], ${generation.clientModule}.${body.schemaName}).pipe(\n    Effect.map((payload) => ({ ...input, payload })),\n  )`
-        : `input => readMultipartFile(input[${JSON.stringify(body.file.configKey)}][0] ?? "", ${JSON.stringify(body.file.acceptedExtensions)}).pipe(\n    Effect.map((file) => ({ ...input, [${JSON.stringify(body.file.configKey)}]: [file] })),\n  )`
+        : `input => readMultipartFile(input[${JSON.stringify(body.file.configKey)}][0] ?? "", ${JSON.stringify(body.file.acceptedExtensions)}).pipe(\n    Effect.map((file) => ({ ...input, [${JSON.stringify(body.file.configKey)}]: ${body.file.fileArray ? "[file]" : "file"} })),\n  )`
   const bodyExpression =
     body === undefined
       ? undefined
@@ -793,7 +874,7 @@ export const generateCliFiles = (
         clientMethods: publicDocument.clientMethods,
         clientModule: "Public",
         clientTag: "Public.PublicApi",
-        count: 16,
+        count: 17,
         family: "public",
       }),
       path: "apps/cli/src/generated/public.ts",

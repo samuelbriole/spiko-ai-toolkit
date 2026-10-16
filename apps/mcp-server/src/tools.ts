@@ -33,7 +33,10 @@ const Success = Schema.Struct({
   source: Schema.String,
 })
 
-export class SpikoMcpError extends Schema.TaggedError<SpikoMcpError>()("SpikoMcpError", {
+export class SpikoMcpError extends Schema.TaggedError<
+  SpikoMcpError,
+  { readonly brand: unique symbol }
+>()("SpikoMcpError", {
   message: Schema.String,
 }) {}
 
@@ -58,7 +61,7 @@ const makeTool = <const Name extends string, Parameters extends Schema.Top>(
 export const ListFunds = makeTool(
   "list_funds",
   "List all Spiko funds and their identifiers.",
-  Schema.Struct({}),
+  Tool.EmptyParams,
 )
 
 export const GetFund = makeTool(
@@ -70,7 +73,7 @@ export const GetFund = makeTool(
 export const ListShareClasses = makeTool(
   "list_share_classes",
   "List all Spiko share classes, including currencies, fees, and token addresses.",
-  Schema.Struct({}),
+  Tool.EmptyParams,
 )
 
 export const GetShareClass = makeTool(

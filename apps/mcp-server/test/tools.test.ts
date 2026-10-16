@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest"
-import { Context } from "effect"
+import { Context, Effect, Layer } from "effect"
 import { Tool } from "effect/ai"
+import { ServerLayer } from "../src/server.ts"
 import { SpikoToolkit } from "../src/tools.ts"
 
 describe("SpikoToolkit", () => {
-  it("exposes every documented Spiko Public API operation", () => {
+  it("registers every tool when the server starts", async () => {
+    await Effect.runPromise(Effect.scoped(Layer.build(ServerLayer)))
+  })
+
+  it("exposes the configured read-only Public API tools", () => {
     expect(Object.keys(SpikoToolkit.tools)).toHaveLength(15)
   })
 

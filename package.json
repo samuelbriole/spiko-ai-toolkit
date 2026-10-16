@@ -27,21 +27,21 @@
   "devDependencies": {
     "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "3.0.3",
-    "@effect/openapi-generator": "4.0.0-rc.118",
-    "@effect/platform-node": "4.0.0-rc.118",
-    "@effect/tsgo": "0.46.1",
-    "@types/node": "24.19.0",
-    "effect": "4.0.0-rc.118",
-    "oxfmt": "0.70.0",
-    "oxlint": "1.85.0",
-    "oxlint-tsgolint": "7.0.2003",
-    "rolldown": "1.2.11",
+    "@effect/openapi-generator": "4.0.5",
+    "@effect/platform-node": "4.0.5",
+    "@effect/tsgo": "0.53.2",
+    "@types/node": "24.19.2",
+    "effect": "4.0.5",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
+    "oxlint-tsgolint": "7.0.2004",
+    "rolldown": "1.2.14",
     "typescript": "7.0.2",
-    "vitest": "5.0.2"
+    "vitest": "5.0.5"
   },
   "engines": {
     "node": ">=24 <25",
     "pnpm": ">=12 <13"
   },
-  "packageManager": "pnpm@12.6.0"
+  "packageManager": "pnpm@12.14.0"
 }
