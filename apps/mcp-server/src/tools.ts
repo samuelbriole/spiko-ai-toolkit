@@ -1,4 +1,9 @@
-import { PublicApi, type PublicApiClient } from "@spiko/public-api-client"
+import {
+  CurrencyCode,
+  PublicApi,
+  type PublicApiClient,
+  ShareClassSymbol,
+} from "@spiko/public-api-client"
 import { Effect, Schema } from "effect"
 import { Tool, Toolkit } from "effect/ai"
 
@@ -9,24 +14,6 @@ const Day = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}$/)).annotat
 const Uuid = Schema.String.check(Schema.isUUID()).annotate({
   description: "A UUID",
 })
-
-const Currency = Schema.Literals(["EUR", "USD", "GBP", "CHF", "JPY", "SGD"])
-
-const ShareClassSymbol = Schema.Literals([
-  "EUTBL",
-  "USTBL",
-  "eurUSTBL",
-  "SPKCC",
-  "eurSPKCC",
-  "UKTBL",
-  "eurUKTBL",
-  "SAFO",
-  "SAFOd",
-  "eurSAFO",
-  "eurSAFOd",
-  "gbpSAFO",
-  "chfSAFO",
-])
 
 const Success = Schema.Struct({
   data: Schema.Unknown,
@@ -150,8 +137,8 @@ export const GetLatestExchangeRate = makeTool(
   "Get the latest exchange rate for a fund and currency pair.",
   Schema.Struct({
     fundId: Uuid,
-    baseCurrency: Currency,
-    quoteCurrency: Currency,
+    baseCurrency: CurrencyCode,
+    quoteCurrency: CurrencyCode,
     latestUpdateDate: Schema.optionalKey(Day),
     fallbackToAnyOtherFund: Schema.optionalKey(Schema.Boolean),
   }),
