@@ -68,6 +68,7 @@ const UnusedTerminal = Terminal.make({
   readInput: Effect.die("unused"),
   readLine: Effect.die("unused"),
   rows: Effect.succeed(24),
+  size: Queue.unbounded<Terminal.Size>(),
 })
 
 type Equal<A, B> =
@@ -307,6 +308,7 @@ describe("spiko command interface", () => {
           readInput: Effect.succeed(input),
           readLine: Effect.die("unused"),
           rows: Effect.succeed(24),
+          size: Queue.unbounded<Terminal.Size>(),
         })
 
         return yield* cli
@@ -340,6 +342,7 @@ describe("spiko command interface", () => {
           readInput: Effect.succeed(input),
           readLine: Effect.die("unused"),
           rows: Effect.succeed(24),
+          size: Queue.unbounded<Terminal.Size>(),
         })
 
         return yield* cli
