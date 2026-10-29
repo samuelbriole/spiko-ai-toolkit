@@ -325,6 +325,7 @@ describe("generated Distributor Operation Catalog", () => {
           readInput: Effect.succeed(input),
           readLine: Effect.die("unused"),
           rows: Effect.succeed(24),
+          size: Queue.unbounded<Terminal.Size>(),
         })
         return yield* makeTestCli(layer)
           .run(["--wizard"])

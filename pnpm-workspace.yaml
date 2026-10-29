@@ -3,10 +3,10 @@ packages:
   - packages/*
 
 catalog:
-  "@effect/platform-node": 4.0.5
+  "@effect/platform-node": 4.1.0
   "@types/node": 24.19.2
-  effect: 4.0.5
-  rolldown: 1.2.14
+  effect: 4.1.0
+  rolldown: 1.2.15
   typescript: 7.0.2
   vitest: 5.0.5
 
@@ -14,14 +14,18 @@ allowBuilds:
   msgpackr-extract: false
 
 minimumReleaseAgeExclude:
-  - "@effect/tsgo-darwin-arm64@0.53.2"
-  - "@effect/tsgo-darwin-x64@0.53.2"
-  - "@effect/tsgo-linux-arm64@0.53.2"
-  - "@effect/tsgo-linux-arm@0.53.2"
-  - "@effect/tsgo-linux-x64@0.53.2"
-  - "@effect/tsgo-win32-arm64@0.53.2"
-  - "@effect/tsgo-win32-x64@0.53.2"
-  - "@effect/tsgo@0.53.2"
+  - "@effect/tsgo-darwin-arm64@0.63.0"
+  - "@effect/tsgo-darwin-x64@0.63.0"
+  - "@effect/tsgo-linux-arm64@0.63.0"
+  - "@effect/tsgo-linux-arm@0.63.0"
+  - "@effect/tsgo-linux-x64@0.63.0"
+  - "@effect/tsgo-win32-arm64@0.63.0"
+  - "@effect/tsgo-win32-x64@0.63.0"
+  - "@effect/tsgo@0.63.0"
   - "@vitest/mocker@5.0.5"
   - "@vitest/spy@5.0.5"
   - vitest@5.0.5
+  - "effect@4.1.0"
+  - "@effect/platform-node@4.1.0"
+  - "@effect/platform-node-shared@4.1.0"
+  - "@effect/openapi-generator@4.1.0"
